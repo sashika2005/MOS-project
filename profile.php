@@ -7,8 +7,8 @@ $coach_name = $goods_name = "";
 
 // Handle form submission for filtering
 if (isset($_POST['filter'])) {
-    $coach_name = $_POST['coach_name'];
-    $goods_name = $_POST['goods_name'];
+    $coach_name = $_POST['coach_name'] ?? '';  // Ensure coach_name is always set
+    $goods_name = $_POST['goods_name'] ?? '';  // Ensure goods_name is always set
 }
 
 // Build SQL query to fetch distribution data with optional filters
@@ -49,12 +49,12 @@ $result = $conn->query($sql);
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label for="coach_name">Coach Name</label>
-                <input type="text" class="form-control" name="coach_name" id="coach_name" value="<?= $coach_name ?>">
+                <input type="text" class="form-control" name="coach_name" id="coach_name" value="<?= htmlspecialchars($coach_name) ?>">
             </div>
 
             <div class="form-group col-md-4">
                 <label for="goods_name">Goods Name</label>
-                <input type="text" class="form-control" name="goods_name" id="goods_name" value="<?= $goods_name ?>">
+                <input type="text" class="form-control" name="goods_name" id="goods_name" value="<?= htmlspecialchars($goods_name) ?>">
             </div>
         </div>
 
@@ -76,10 +76,14 @@ $result = $conn->query($sql);
             // Check if there are results and display them
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
+                    // Ensure keys exist to prevent undefined index warnings
+                    $coach_name = isset($row['coach_name']) ? $row['coach_name'] : 'Unknown';
+                    $goods_name = isset($row['goods_name']) ? $row['goods_name'] : 'Unknown';
+
                     echo "<tr>
                             <td>{$row['id']}</td>
-                            <td>{$row['coach_name']}</td>
-                            <td>{$row['goods_name']}</td>
+                            <td>{$coach_name}</td>
+                            <td>{$goods_name}</td>
                             <td>{$row['quantity']}</td>
                           </tr>";
                 }
