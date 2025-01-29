@@ -2,6 +2,9 @@
 // Include the database connection
 include('db_connection.php');
 
+// Start the session to store messages
+session_start();
+
 // Handle form submission
 if (isset($_POST['distribute_goods'])) {
     $coach_id = $_POST['coach_id'];
@@ -14,7 +17,7 @@ if (isset($_POST['distribute_goods'])) {
     $remaining_stock = $row['remaining_stock'];
 
     if ($quantity > $remaining_stock) {
-        $error_message = "Error: Quantity entered exceeds remaining stock.";
+        $_SESSION['error_message'] = "Error: Quantity entered exceeds remaining stock.";
     } else {
         // Update stock if quantity is valid
         $conn->query("UPDATE SportingGoods SET remaining_stock = remaining_stock - $quantity WHERE id = $goods_id");
@@ -22,8 +25,12 @@ if (isset($_POST['distribute_goods'])) {
         // Insert into Distribution table
         $conn->query("INSERT INTO Distribution (coach_id, goods_id, quantity) VALUES ('$coach_id', '$goods_id', '$quantity')");
 
-        // Success message or redirection (optional)
-        $success_message = "Goods successfully distributed.";
+        // Set success message
+        $_SESSION['success_message'] = "Success: Goods distributed successfully!";
+        
+        // Redirect after successful submission to avoid resubmission on refresh
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
     }
 }
 ?>
@@ -73,13 +80,15 @@ if (isset($_POST['distribute_goods'])) {
         <h2>Distribute Goods</h2>
         
         <!-- Display error message if quantity exceeds stock -->
-        <?php if (isset($error_message)): ?>
-            <div class="error-message"><?= $error_message; ?></div>
+        <?php if (isset($_SESSION['error_message'])): ?>
+            <div class="error-message"><?= $_SESSION['error_message']; ?></div>
+            <?php unset($_SESSION['error_message']); ?>
         <?php endif; ?>
 
         <!-- Display success message after successful distribution -->
-        <?php if (isset($success_message)): ?>
-            <div class="success-message"><?= $success_message; ?></div>
+        <?php if (isset($_SESSION['success_message'])): ?>
+            <div class="success-message"><?= $_SESSION['success_message']; ?></div>
+            <?php unset($_SESSION['success_message']); ?>
         <?php endif; ?>
 
         <form method="POST">
