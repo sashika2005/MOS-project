@@ -1,3 +1,4 @@
+<?php include('head.php'); ?>
 <?php
 // Database connection
 $servername = "localhost";
@@ -117,11 +118,45 @@ $result = $conn->query($sql);
     <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.12.1/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.12.1/js/jquery.dataTables.min.js"></script>
 
-    <script>
+<script>
         $(document).ready(function() {
-            $('#coachesTable').DataTable();
+            $('#coachesTable').DataTable({
+                dom: 'Bfrtip',
+                order: [],
+                pageLength: 10,
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: {
+                            columns: ':visible' // Include only visible columns
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':visible' // Include only visible columns
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: ':visible' // Include only visible columns
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: ':visible' // Include only visible columns
+                        }
+                    },
+                    'colvis' // Column visibility button
+                ],
+                responsive: true
+            });
         });
     </script>
+<?php include('foot.php'); ?>
+
 </body>
 </html>
 
