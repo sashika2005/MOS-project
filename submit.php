@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Execute and check if inserted
     if ($stmt->execute()) {
-        echo "<script>alert('Registration successful!'); window.location.href='index.php';</script>";
+        echo "<script>alert('Registration successful!'); window.location.href='form.php';</script>";
     } else {
         echo "<script>alert('Error: Could not register.'); window.history.back();</script>";
     }
