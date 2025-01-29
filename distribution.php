@@ -17,7 +17,12 @@ if (isset($_POST['distribute_goods'])) {
     $remaining_stock = $row['remaining_stock'];
 
     if ($quantity > $remaining_stock) {
+        // Store error message in the session
         $_SESSION['error_message'] = "Error: Quantity entered exceeds remaining stock.";
+        
+        // Redirect to prevent form resubmission
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
     } else {
         // Update stock if quantity is valid
         $conn->query("UPDATE SportingGoods SET remaining_stock = remaining_stock - $quantity WHERE id = $goods_id");
