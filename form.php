@@ -33,7 +33,7 @@
 
         .card {
             max-width: 1000px;
-            padding: 25px;
+            padding: 65px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 15px;
@@ -41,7 +41,7 @@
             color: rgb(15, 14, 14);
             animation: fadeIn 1s ease-in-out;
             width: 100%;
-            margin-top: 100px; /* Adjusted to ensure the form isn't hidden behind the navbar */
+            margin-left: 150px; /* Adjusted to ensure the form isn't hidden behind the navbar */
         }
 
         .form-label {
@@ -100,7 +100,7 @@
                     <a class="nav-link" href="goods.php">Goods</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="check.php">Check</a>
+                    <a class="nav-link" href="distribution.php">distribution</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="profile.php">Profile</a>
@@ -123,10 +123,20 @@
                     <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="work_place" class="form-label">Service Place:</label>
-                    <input type="text" class="form-control" id="work_place" name="work_place" placeholder="Enter service place" required>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="work_place" class="form-label">Service Place:</label>
+                        <input type="text" class="form-control" id="work_place" name="work_place" placeholder="Enter service place" required>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="post" class="form-label">Post:</label>
+                        <select name="post" class="form-select" required>
+                            <option value="Sport Officer">Sport Officer</option>
+                            <option value="Coach">Coach</option>
+                        </select>
+                    </div>
                 </div>
+
 
                 <div class="mb-3">
                     <label for="NIC" class="form-label">NIC:</label>
@@ -144,14 +154,6 @@
                         <option value="Galle">Galle</option>
                         <option value="Matara">Matara</option>
                         <option value="Hambantota">Hambantota</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="post" class="form-label">Post:</label>
-                    <select name="post" class="form-select" required>
-                        <option value="Sport Officer">Sport Officer</option>
-                        <option value="Coach">Coach</option>
                     </select>
                 </div>
 

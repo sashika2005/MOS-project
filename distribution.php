@@ -46,7 +46,7 @@ if (isset($_POST['distribute_goods'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Distribution Form</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,7 +55,7 @@ if (isset($_POST['distribute_goods'])) {
         .form-container {
             max-width: 500px;
             margin: auto;
-            padding: 20px;
+            padding: 50px;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -65,7 +65,7 @@ if (isset($_POST['distribute_goods'])) {
             margin-bottom: 20px;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 25px;
         }
         .error-message {
             color: red;
@@ -92,7 +92,8 @@ if (isset($_POST['distribute_goods'])) {
 </head>
 <body>
  <!-- Navbar -->
- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+ <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="form.php">Sports</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,7 +111,7 @@ if (isset($_POST['distribute_goods'])) {
                     <a class="nav-link" href="goods.php">Goods</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="check.php">Check</a>
+                    <a class="nav-link" href="distribution.php">distribution</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="profile.php">Profile</a>
@@ -171,7 +172,7 @@ if (isset($_POST['distribute_goods'])) {
                 <input type="number" name="quantity" class="form-control" placeholder="Quantity" required>
             </div>
 
-            <button type="submit" name="distribute_goods" class="btn btn-primary btn-block">Distribute</button>
+            <button type="submit" name="distribute_goods" class="btn btn-primary btn-block col-12">Distribute</button>
         </form>
     </div>
 

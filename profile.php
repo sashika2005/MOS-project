@@ -141,7 +141,7 @@ $result = $stmt->get_result();
                     <a class="nav-link" href="goods.php">Goods</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="check.php">Check</a>
+                    <a class="nav-link" href="distribution.php">distribution</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="profile.php">Profile</a>
