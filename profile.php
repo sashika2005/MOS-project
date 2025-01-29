@@ -3,13 +3,12 @@
 include('db_connection.php');
 
 // Initialize variables for filter input
-$coach_id = $goods_id = $quantity = "";
+$coach_name = $goods_name = "";
 
 // Handle form submission for filtering
 if (isset($_POST['filter'])) {
-    $coach_id = $_POST['coach_id'];
-    $goods_id = $_POST['goods_id'];
-    $quantity = $_POST['quantity'];
+    $coach_name = $_POST['coach_name'];
+    $goods_name = $_POST['goods_name'];
 }
 
 // Build SQL query to fetch distribution data with optional filters
@@ -20,16 +19,12 @@ $sql = "SELECT d.id, c.name AS coach_name, g.name AS goods_name, d.quantity
         WHERE 1";  // Always true condition to simplify adding filters
 
 // Add filter conditions if values are provided
-if ($coach_id) {
-    $sql .= " AND d.coach_id = '$coach_id'";
+if ($coach_name) {
+    $sql .= " AND c.name LIKE '%$coach_name%'";
 }
 
-if ($goods_id) {
-    $sql .= " AND d.goods_id = '$goods_id'";
-}
-
-if ($quantity) {
-    $sql .= " AND d.quantity = '$quantity'";
+if ($goods_name) {
+    $sql .= " AND g.name LIKE '%$goods_name%'";
 }
 
 // Execute the query
@@ -53,18 +48,13 @@ $result = $conn->query($sql);
     <form method="POST" class="mb-4">
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="coach_id">Coach ID</label>
-                <input type="number" class="form-control" name="coach_id" id="coach_id" value="<?= $coach_id ?>">
+                <label for="coach_name">Coach Name</label>
+                <input type="text" class="form-control" name="coach_name" id="coach_name" value="<?= $coach_name ?>">
             </div>
 
             <div class="form-group col-md-4">
-                <label for="goods_id">Goods ID</label>
-                <input type="number" class="form-control" name="goods_id" id="goods_id" value="<?= $goods_id ?>">
-            </div>
-
-            <div class="form-group col-md-4">
-                <label for="quantity">Quantity</label>
-                <input type="number" class="form-control" name="quantity" id="quantity" value="<?= $quantity ?>">
+                <label for="goods_name">Goods Name</label>
+                <input type="text" class="form-control" name="goods_name" id="goods_name" value="<?= $goods_name ?>">
             </div>
         </div>
 
