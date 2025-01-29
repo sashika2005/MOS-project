@@ -7,38 +7,50 @@ session_start();
 
 // Handle form submission
 if (isset($_POST['distribute_goods'])) {
-    $coach_id = $_POST['coach_id'];
-    $goods_id = $_POST['goods_id'];
-    $quantity = $_POST['quantity'];
+    $coach_name = $_POST['coach_name'];
+    $goods_name = $_POST['goods_name'];
+    $quantity = (int) $_POST['quantity'];
+    $date = $_POST['date'];
 
-    // Check if the entered quantity is greater than the remaining stock
-    $result = $conn->query("SELECT remaining_stock FROM SportingGoods WHERE id = $goods_id");
-    $row = $result->fetch_assoc();
-    $remaining_stock = $row['remaining_stock'];
-
-    if ($quantity > $remaining_stock) {
-        // Store error message in the session
-        $_SESSION['error_message'] = "Error: Quantity entered exceeds remaining stock.";
-        
-        // Redirect to prevent form resubmission
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
+    // Get the coach ID based on the name
+    $coach_result = $conn->query("SELECT id FROM Coach WHERE name = '$coach_name'");
+    if ($coach_result->num_rows > 0) {
+        $coach_row = $coach_result->fetch_assoc();
+        $coach_id = $coach_row['id'];
     } else {
-        // Update stock if quantity is valid
-        $conn->query("UPDATE SportingGoods SET remaining_stock = remaining_stock - $quantity WHERE id = $goods_id");
-
-        // Insert into Distribution table
-        $conn->query("INSERT INTO Distribution (coach_id, goods_id, quantity) VALUES ('$coach_id', '$goods_id', '$quantity')");
-
-        // Set success message
-        $_SESSION['success_message'] = "Success: Goods distributed successfully!";
-        
-        // Redirect after successful submission to avoid resubmission on refresh
+        $_SESSION['error_message'] = "Error: Coach not found.";
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
     }
+
+    // Get the goods ID and remaining stock based on the name
+    $goods_result = $conn->query("SELECT id, remaining_stock FROM SportingGoods WHERE name = '$goods_name'");
+    if ($goods_result->num_rows > 0) {
+        $goods_row = $goods_result->fetch_assoc();
+        $goods_id = $goods_row['id'];
+        $remaining_stock = $goods_row['remaining_stock'];
+    } else {
+        $_SESSION['error_message'] = "Error: Sporting goods not found.";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    }
+
+    // Check if entered quantity exceeds available stock
+    if ($quantity > $remaining_stock) {
+        $_SESSION['error_message'] = "Error: Quantity entered exceeds remaining stock.";
+    } else {
+        // Update stock and insert into the distribution table
+        $conn->query("UPDATE SportingGoods SET remaining_stock = remaining_stock - $quantity WHERE id = $goods_id");
+        $conn->query("INSERT INTO Distribution (coach_id, goods_id, quantity, date) VALUES ('$coach_id', '$goods_id', '$quantity', '$date')");
+        $_SESSION['success_message'] = "Success: Goods distributed successfully!";
+    }
+
+    // Redirect to avoid form resubmission
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -78,54 +90,51 @@ if (isset($_POST['distribute_goods'])) {
             margin-bottom: 15px;
         }
         .navbar {
-            background-color: rgba(0, 0, 0, 0.7) !important; /* Added background color to the navbar */
+            background-color: rgba(0, 0, 0, 0.7) !important;
             z-index: 10;
-            position: fixed; /* Fixed position */
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             width: 100%;
             padding: 10px 0;
         }
-
     </style>
 </head>
 <body>
- <!-- Navbar -->
- <!-- Navbar -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="form.php">Sports</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto"> <!-- Added ms-auto class here to align to the right -->
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="form.php">Register</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="displaytable.php">View Table</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="goods.php">Goods</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="distribution.php">distribution</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="profile.php">Profile</a>
-                </li>
-            </ul>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="form.php">Sports</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="form.php">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="displaytable.php">View Table</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="goods.php">Goods</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="distribution.php">Distribution</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.php">Profile</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
-<br>
-<br>
+    </nav>
+    <br><br>
 
     <div class="form-container">
         <h2>Distribute Goods</h2>
-        
+
         <!-- Display error message if quantity exceeds stock -->
         <?php if (isset($_SESSION['error_message'])): ?>
             <div class="error-message"><?= $_SESSION['error_message']; ?></div>
@@ -139,37 +148,41 @@ if (isset($_POST['distribute_goods'])) {
         <?php endif; ?>
 
         <form method="POST">
-            <div class="form-group">
+           <div class="form-group">
                 <label for="coach_id">Select Coach</label>
-                <select name="coach_id" class="form-control" required>
-                    <option value="">Select Coach</option>
+                <input list="coach_list" name="coach_name" class="form-control" required>
+                <datalist id="coach_list">
                     <?php
-                    $coaches = $conn->query("SELECT * FROM Coach");
+                    $coaches = $conn->query("SELECT name FROM Coach");
                     while ($row = $coaches->fetch_assoc()) {
-                        echo "<option value='{$row['id']}'>{$row['name']}</option>";
+                        echo "<option value='{$row['name']}'></option>";
                     }
                     ?>
-                </select>
+                </datalist>
             </div>
 
             <div class="form-group">
                 <label for="goods_id">Select Goods</label>
-                <select name="goods_id" class="form-control" required>
-                    <option value="">Select Goods</option>
+                <input list="goods_list" name="goods_name" class="form-control" required>
+                <datalist id="goods_list">
                     <?php
-                    $goods = $conn->query("SELECT * FROM SportingGoods");
+                    $goods = $conn->query("SELECT name, remaining_stock FROM SportingGoods");
                     while ($row = $goods->fetch_assoc()) {
-                        echo "<option value='{$row['id']}'>
-                                {$row['name']} (Remaining: {$row['remaining_stock']})
-                            </option>";
+                        echo "<option value='{$row['name']}'>Remaining: {$row['remaining_stock']}</option>";
                     }
                     ?>
-                </select>
+                </datalist>
             </div>
+
 
             <div class="form-group">
                 <label for="quantity">Quantity</label>
                 <input type="number" name="quantity" class="form-control" placeholder="Quantity" required>
+            </div>
+
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" name="date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
             </div>
 
             <button type="submit" name="distribute_goods" class="btn btn-primary btn-block col-12">Distribute</button>
@@ -179,6 +192,5 @@ if (isset($_POST['distribute_goods'])) {
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 </body>
 </html>

@@ -1,3 +1,4 @@
+<?php include('head.php'); ?>
 <?php 
 include 'db_connection.php';
 session_start();  // Start the session to store success message
@@ -50,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Sporting Goods</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
      .navbar {
             background-color: rgba(0, 0, 0, 0.7) !important; /* Added background color to the navbar */
@@ -62,10 +63,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             width: 100%;
             padding: 10px 0;
         }
-        
-    .card{
-        padding-left: 50px;
-    }
+
+    .card {
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 40px 100px;
+    transition: all 0.3s ease;
+}
     </style>
 </head>
 <body>
@@ -101,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <br>
 
     <div class="container mt-5">
-        <div class="card shadow-sm p-4">
+        <div class="card">
             <h2 class="mb-4">Add Sporting Goods</h2>
             
             <!-- Display session message if set -->
@@ -121,15 +127,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="total_stock" class="form-label">Total Stock</label>
                     <input type="number" id="total_stock" name="total_stock" class="form-control" placeholder="Enter total stock" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Save Goods</button>
+                <button type="submit" class="btn btn-primary mt-4 col-2">Save</button>
             </form>
         </div>
     </div>
 
-    <div class="container mt-5">
-        <div class="card shadow-sm p-4">
+    <div class="container mt-5 mb-5">
+        
             <h2>All Sporting Goods</h2>
-            <table class="table table-bordered">
+            <table class="table" id="table1">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -155,8 +161,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ?>
                 </tbody>
             </table>
-        </div>
+        
     </div>
+<script>
+        $(document).ready(function() {
+            $('#table1').DataTable({
+                pageLength: 7,
+                
+            });
+        });
+    </script>
+<?php include('foot.php'); ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
