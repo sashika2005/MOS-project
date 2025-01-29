@@ -2,7 +2,21 @@
 include 'db_connection.php';
 session_start();  // Start the session to store success message
 
-// Redirect after successful form submission
+// Delete the row if delete_id is set
+if (isset($_GET['delete_id'])) {
+    $delete_id = (int)$_GET['delete_id'];
+    $delete_query = "DELETE FROM SportingGoods WHERE id = $delete_id";
+    
+    if ($conn->query($delete_query) === TRUE) {
+        $_SESSION['message'] = "<div class='alert alert-success'>Sporting goods deleted successfully!</div>";
+    } else {
+        $_SESSION['message'] = "<div class='alert alert-danger'>Error: " . $conn->error . "</div>";
+    }
+    header("Location: " . $_SERVER['PHP_SELF']);  // Redirect to prevent resubmission
+    exit();
+}
+
+// Handle form submission for adding goods
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $goods_name = $conn->real_escape_string($_POST['goods_name']);
     $total_stock = (int)$_POST['total_stock'];
