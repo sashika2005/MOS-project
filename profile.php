@@ -1,36 +1,39 @@
 <?php
-// Include the database connection
+// Include database connection
 include('db_connection.php');
 
-// Start the session to store messages
-session_start();
+// Initialize variables for filter input
+$coach_id = $goods_id = $quantity = "";
 
 // Handle form submission for filtering
-$coach_filter = isset($_POST['coach_filter']) ? $_POST['coach_filter'] : '';
-$quantity_filter = isset($_POST['quantity_filter']) ? $_POST['quantity_filter'] : '';
-
-// Query for distribution data with optional filtering
-$query = "SELECT * FROM Distribution";
-
-// Add filtering conditions if coach filter or quantity filter is set
-$conditions = [];
-if ($coach_filter) {
-    $conditions[] = "coach_id = $coach_filter";
+if (isset($_POST['filter'])) {
+    $coach_id = $_POST['coach_id'];
+    $goods_id = $_POST['goods_id'];
+    $quantity = $_POST['quantity'];
 }
 
-if ($quantity_filter) {
-    $conditions[] = "quantity > $quantity_filter";
+// Build SQL query to fetch distribution data with optional filters
+$sql = "SELECT d.id, c.name AS coach_name, g.name AS goods_name, d.quantity 
+        FROM Distribution d
+        JOIN Coach c ON d.coach_id = c.id
+        JOIN SportingGoods g ON d.goods_id = g.id
+        WHERE 1";  // Always true condition to simplify adding filters
+
+// Add filter conditions if values are provided
+if ($coach_id) {
+    $sql .= " AND d.coach_id = '$coach_id'";
 }
 
-if (count($conditions) > 0) {
-    $query .= " WHERE " . implode(' AND ', $conditions);
+if ($goods_id) {
+    $sql .= " AND d.goods_id = '$goods_id'";
 }
 
-$result = $conn->query($query);
+if ($quantity) {
+    $sql .= " AND d.quantity = '$quantity'";
+}
 
-// Fetch the coaches for the dropdown filter
-$coaches_result = $conn->query("SELECT * FROM Coach");
-
+// Execute the query
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -38,93 +41,74 @@ $coaches_result = $conn->query("SELECT * FROM Coach");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Distribution Data</title>
+    <title>Filter Distribution Records</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 30px;
-        }
-        .filter-container {
-            margin-bottom: 20px;
-        }
-        table th, table td {
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2 class="text-center mb-4">Coach Distribution Profile</h2>
+<div class="container mt-5">
+    <h2>Filter Distribution Records</h2>
 
-        <!-- Filter Form -->
-        <div class="filter-container">
-            <form method="POST" class="form-inline">
-                <label for="coach_filter" class="mr-2">Filter by Coach:</label>
-                <select name="coach_filter" class="form-control mr-2" id="coach_filter">
-                    <option value="">Select Coach</option>
-                    <?php
-                    while ($row = $coaches_result->fetch_assoc()) {
-                        echo "<option value='{$row['id']}' " . ($coach_filter == $row['id'] ? 'selected' : '') . ">{$row['name']}</option>";
-                    }
-                    ?>
-                </select>
+    <!-- Filter form -->
+    <form method="POST" class="mb-4">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="coach_id">Coach ID</label>
+                <input type="number" class="form-control" name="coach_id" id="coach_id" value="<?= $coach_id ?>">
+            </div>
 
-                <label for="quantity_filter" class="mr-2">Minimum Quantity:</label>
-                <input type="number" name="quantity_filter" class="form-control mr-2" placeholder="Enter quantity" value="<?= $quantity_filter ?>">
+            <div class="form-group col-md-4">
+                <label for="goods_id">Goods ID</label>
+                <input type="number" class="form-control" name="goods_id" id="goods_id" value="<?= $goods_id ?>">
+            </div>
 
-                <button type="submit" class="btn btn-primary">Filter</button>
-            </form>
+            <div class="form-group col-md-4">
+                <label for="quantity">Quantity</label>
+                <input type="number" class="form-control" name="quantity" id="quantity" value="<?= $quantity ?>">
+            </div>
         </div>
 
-        <!-- Distribution Table -->
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Coach Name</th>
-                    <th>Goods Name</th>
-                    <th>Quantity Distributed</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        // Get coach name from the Coach table
-                        $coach_id = $row['coach_id'];
-                        $coach_result = $conn->query("SELECT name FROM Coach WHERE id = $coach_id");
-                        $coach = $coach_result->fetch_assoc();
+        <button type="submit" name="filter" class="btn btn-primary">Filter</button>
+    </form>
 
-                        // Get goods name from the SportingGoods table
-                        $goods_id = $row['goods_id'];
-                        $goods_result = $conn->query("SELECT name FROM SportingGoods WHERE id = $goods_id");
-                        $goods = $goods_result->fetch_assoc();
-
-                        echo "<tr>
-                                <td>{$row['id']}</td>
-                                <td>{$coach['name']}</td>
-                                <td>{$goods['name']}</td>
-                                <td>{$row['quantity']}</td>
-                                <td>{$row['date']}</td>
-                            </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='5'>No records found</td></tr>";
+    <!-- Display filtered results -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Coach Name</th>
+                <th>Goods Name</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Check if there are results and display them
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>
+                            <td>{$row['id']}</td>
+                            <td>{$row['coach_name']}</td>
+                            <td>{$row['goods_name']}</td>
+                            <td>{$row['quantity']}</td>
+                          </tr>";
                 }
-                ?>
-            </tbody>
-        </table>
-    </div>
+            } else {
+                echo "<tr><td colspan='4'>No data found</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>
 
 <?php
+// Close database connection
 $conn->close();
 ?>
