@@ -77,9 +77,50 @@ if (isset($_POST['distribute_goods'])) {
             text-align: center;
             margin-bottom: 15px;
         }
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.7) !important; /* Added background color to the navbar */
+            z-index: 10;
+            position: fixed; /* Fixed position */
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: 10px 0;
+        }
+
     </style>
 </head>
 <body>
+ <!-- Navbar -->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="form.php">Sports</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto"> <!-- Added ms-auto class here to align to the right -->
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="form.php">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="displaytable.php">View Table</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="goods.php">Goods</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="check.php">Check</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.php">Profile</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br>
+<br>
 
     <div class="form-container">
         <h2>Distribute Goods</h2>

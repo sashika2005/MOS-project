@@ -28,10 +28,22 @@ $result = $conn->query($sql);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- DataTable CSS -->
     <link href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<style>
+     .navbar {
+            background-color: rgba(0, 0, 0, 0.7) !important; /* Added background color to the navbar */
+            z-index: 10;
+            position: fixed; /* Fixed position */
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: 10px 0;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+   <!-- Navbar -->
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="form.php">Sports</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,12 +63,15 @@ $result = $conn->query($sql);
                 <li class="nav-item">
                     <a class="nav-link" href="check.php">Check</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.php">Profile</a>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
-
-
+<br>
+<br>
     <div class="container my-5">
         <h2 class="text-center mb-4">Coaches List</h2>
 
